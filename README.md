@@ -6,6 +6,8 @@
 npm create please-test my-project
 ```
 
+The built-in template is pre-configured against **[practicetestautomation.com/practice-test-login](https://practicetestautomation.com/practice-test-login/)** — runs out of the box with no extra setup.
+
 ---
 
 ## What it does
@@ -38,16 +40,16 @@ cd my-project
 # 3. Install dependencies
 npm install
 
-# 4. Configure your app URL and credentials
+# 4. Copy the environment file
 cp .env.example .env
 ```
 
-Edit `.env`:
+`.env` is pre-filled with the default credentials for the practice site:
 
 ```env
-BASE_URL=https://myapp.com
-ACCOUNT_EMAIL=user@mail.com
-ACCOUNT_PASSWORD=secret
+BASE_URL=https://practicetestautomation.com
+ACCOUNT_USERNAME=student
+ACCOUNT_PASSWORD=Password123
 ```
 
 ```bash
@@ -71,14 +73,28 @@ my-project/
 ├── .gitignore
 │
 ├── data/
-│   └── main.js           # URLs, page titles, and test account data
+│   └── main.js           # Page URLs and test account data
 │
 ├── components/
 │   └── auth.js           # Reusable login/logout actions
 │
 └── feature/
-    └── login.spec.js     # Login test suite (example)
+    └── login.spec.js     # Example login test suite
 ```
+
+---
+
+## Template Tests: Login
+
+The template includes **5 login scenarios** against `practicetestautomation.com`:
+
+| # | Scenario | Expected |
+|---|----------|----------|
+| 1 | Open login page | Page loads |
+| 2 | Login with wrong username | Error: `Your username is invalid!` |
+| 3 | Login with wrong password | Error: `Your password is invalid!` |
+| 4 | Login with empty form | Error: `Your username is invalid!` |
+| 5 | Successful login | Redirect to `/logged-in-successfully/`, heading `Logged In Successfully` visible |
 
 ---
 
@@ -102,7 +118,7 @@ module.exports = {
 }
 ```
 
-`please` is the main wrapper around Selenium. All your test files import it from `app.js`.
+`please` is the main Selenium wrapper. All test files import it from `app.js`.
 
 ---
 
@@ -111,19 +127,25 @@ module.exports = {
 ```js
 module.exports = {
     URL: {
-        login:     { url: `${base_url}/login`,     title: 'Login' },
-        dashboard: { url: `${base_url}/dashboard`, title: 'Dashboard' }
+        login: {
+            url: `${base_url}/practice-test-login/`,
+            title: 'Test Login | Practice Test Automation'
+        },
+        dashboard: {
+            url: `${base_url}/logged-in-successfully/`,
+            title: 'Logged In Successfully | Practice Test Automation'
+        }
     },
     ACCOUNT: {
-        valid:         { email: '...', password: '...' },
-        wrongPassword: { email: '...', password: 'wrongpassword' },
-        wrongEmail:    { email: 'invalid@email', password: '...' },
-        empty:         { email: '',   password: '' }
+        valid:         { username: 'student',     password: 'Password123' },
+        wrongPassword: { username: 'student',     password: 'wrongpassword' },
+        wrongUsername: { username: 'invaliduser', password: 'Password123' },
+        empty:         { username: '',            password: '' }
     }
 }
 ```
 
-Add new pages and accounts here instead of hardcoding values in specs.
+Add new pages and accounts here instead of hardcoding values in spec files.
 
 ---
 
@@ -132,39 +154,45 @@ Add new pages and accounts here instead of hardcoding values in specs.
 ```js
 class Auth {
     async login(user) {
-        await please.fill('input email',    '#email',               user.email)
-        await please.fill('input password', '#password',            user.password)
-        await please.click('button login',  '//button[@type="submit"]')
+        await please.fill('username input', '#username', user.username)
+        await please.fill('password input', '#password', user.password)
+        await please.click('submit button', '#submit')
     }
 
     async logout() {
-        await please.click('menu profil',   '.user-menu')
-        await please.click('button logout', 'link=Logout')
+        await please.click('logout button', 'link=Log out')
     }
 }
 ```
 
-Components encapsulate page interactions so specs stay readable and DRY.
+Components encapsulate page interactions so spec files stay readable and DRY.
 
 ---
 
-### `feature/login.spec.js` — Writing a test
+### `feature/login.spec.js` — Example test
 
 ```js
 const { please, AUTH } = require('../app')
 const { URL, ACCOUNT } = require('../data/main')
 
-describe('Login', () => {
-    it('login berhasil', async () => {
+describe('Login - practicetestautomation.com', () => {
+    it('shows error on wrong username', async () => {
+        await please.goTo(URL.login)
+        await AUTH.login(ACCOUNT.wrongUsername)
+        await please.see('error message', '//div[@id="error"]', 'Your username is invalid!')
+    })
+
+    it('redirects to dashboard on successful login', async () => {
         await please.goTo(URL.login)
         await AUTH.login(ACCOUNT.valid)
         await please.checkWhere(URL.dashboard)
+        await please.see('success heading', '//h1', 'Logged In Successfully')
         await AUTH.logout()
     })
 })
 ```
 
-Each `it` block is one test case. Use `AUTH` (or any component) to keep interaction logic out of your spec.
+Each `it` block is one test case. Use components like `AUTH` to keep interaction logic out of the spec.
 
 ---
 
@@ -174,8 +202,6 @@ Each `it` block is one test case. Use `AUTH` (or any component) to keep interact
 require('./feature/login.spec')
 // require('./feature/checkout.spec')   // uncomment to enable
 ```
-
-Uncomment a line to add a spec to the test run.
 
 ---
 
@@ -190,9 +216,9 @@ Uncomment a line to add a spec to the test run.
 
 ## Scripts
 
-| Command       | Description                              |
-|---------------|------------------------------------------|
-| `npm test`    | Run all enabled specs in the terminal    |
+| Command | Description |
+|---------|-------------|
+| `npm test` | Run all enabled specs in the terminal |
 | `npm run report` | Run tests and generate an HTML report at `report/index.html` |
 
 ---

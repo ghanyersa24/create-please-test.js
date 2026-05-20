@@ -5,29 +5,29 @@ const base_url = process.env.BASE_URL
 module.exports = {
     URL: {
         login: {
-            url: `${base_url}/login`,
-            title: 'Login'
+            url: `${base_url}/practice-test-login/`,
+            title: 'Test Login | Practice Test Automation'
         },
         dashboard: {
-            url: `${base_url}/dashboard`,
-            title: 'Dashboard'
+            url: `${base_url}/logged-in-successfully/`,
+            title: 'Logged In Successfully | Practice Test Automation'
         }
     },
     ACCOUNT: {
         valid: {
-            email: process.env.ACCOUNT_EMAIL,
+            username: process.env.ACCOUNT_USERNAME,
             password: process.env.ACCOUNT_PASSWORD
         },
         wrongPassword: {
-            email: process.env.ACCOUNT_EMAIL,
+            username: process.env.ACCOUNT_USERNAME,
             password: 'wrongpassword'
         },
-        wrongEmail: {
-            email: 'invalid@email',
+        wrongUsername: {
+            username: 'invaliduser',
             password: process.env.ACCOUNT_PASSWORD
         },
         empty: {
-            email: '',
+            username: '',
             password: ''
         }
     }
