@@ -1,12 +1,20 @@
 {
     "name": "create-please-test",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Scaffold a new automation test project using please.js",
     "main": "index.js",
     "bin": {
         "create-please-test": "index.js"
     },
-    "keywords": ["selenium", "webdriver", "automation", "testing", "e2e", "scaffold", "create"],
+    "keywords": [
+        "selenium",
+        "webdriver",
+        "automation",
+        "testing",
+        "e2e",
+        "scaffold",
+        "create"
+    ],
     "author": "Myghan <ghanyersa24@gmail.com>",
     "license": "MIT",
     "engines": {
