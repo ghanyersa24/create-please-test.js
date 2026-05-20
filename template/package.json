@@ -1,0 +1,18 @@
+{
+    "name": "my-automation-tests",
+    "version": "1.0.0",
+    "description": "Automation test project using please.js",
+    "scripts": {
+        "test": "mocha --recursive --timeout 100000 index.js",
+        "report": "mocha --recursive --timeout 100000 index.js --reporter mochawesome --reporter-options code=false,charts=true,assetsDir=report/assets,reportDir=report,reportFilename=index,reportPageTitle=Test Report"
+    },
+    "dependencies": {
+        "please.js": "^1.0.0",
+        "selenium-webdriver": "^4.0.0"
+    },
+    "devDependencies": {
+        "dotenv": "^16.0.0",
+        "mocha": "^11.0.0",
+        "mochawesome": "^7.1.4"
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "name": "create-please.js",
+    "version": "1.0.0",
+    "description": "Scaffold a new automation test project using please.js",
+    "main": "index.js",
+    "bin": {
+        "create-please.js": "index.js"
+    },
+    "keywords": ["selenium", "webdriver", "automation", "testing", "e2e", "scaffold", "create"],
+    "author": "Myghan <ghanyersa24@gmail.com>",
+    "license": "MIT",
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "files": [
+        "index.js",
+        "template/"
+    ]
+}
